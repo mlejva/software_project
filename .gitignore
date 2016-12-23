@@ -1,0 +1,7 @@
+# OS
+*.DS_Store
+
+# Videos
+videos_orig/
+videos_samples/
+videos_slowed_full/
