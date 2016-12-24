@@ -1,0 +1,37 @@
+﻿Videa (vetsinou ~700-800MB):
+https://storage.googleapis.com/software-project-data/apple.tgz
+https://storage.googleapis.com/software-project-data/backpack.tgz
+https://storage.googleapis.com/software-project-data/ball.tgz
+https://storage.googleapis.com/software-project-data/banana.tgz
+https://storage.googleapis.com/software-project-data/box.tgz
+https://storage.googleapis.com/software-project-data/bucket.tgz
+https://storage.googleapis.com/software-project-data/coaster.tgz
+https://storage.googleapis.com/software-project-data/comp_mouse.tgz
+https://storage.googleapis.com/software-project-data/ducktape.tgz
+https://storage.googleapis.com/software-project-data/dvd_box.tgz
+https://storage.googleapis.com/software-project-data/lemon.tgz
+https://storage.googleapis.com/software-project-data/napkin_box.tgz
+https://storage.googleapis.com/software-project-data/pillow.tgz
+https://storage.googleapis.com/software-project-data/remote.tgz
+https://storage.googleapis.com/software-project-data/shoe.tgz
+https://storage.googleapis.com/software-project-data/tangerine.tgz
+https://storage.googleapis.com/software-project-data/wood.tgz
+https://storage.googleapis.com/software-project-data/yoyo.tgz
+
+Data original
+- ruznych 18 objektu
+- Bile pozadi
+- 800x480, 120fps
+- S jednim objektem vetsinou 5 typu hodu (ruzne pozice)
+- ~50 sekund
+
+Processed
+- 1280 × 720, 60fps
+- Zpomaleno 2x -> ~100 sekund
+- Rozsekano po 2 sekundach -> 4438 vzorku
+	- Nektere vzorky jsou bez pohybu -> vadi to? // TODO
+-  Pripadne zvysit pocet vzorku vytvorenim kopii, ktere jsou postupne otacene o 90 stupnu a jsou prehravane odzadu // TODO
+	- Nejsou takova data prilis stejna? 
+	- Nemit radeji vice objektu?
+	- Pokud bych toto udelal, tak budu mit 4 (otaceni o 90 stupnu) * 2 (jednou prehravane odzadu a jednou normalne) * 4438 (pocet vzorku nyni) = 35504 vzorku
+
