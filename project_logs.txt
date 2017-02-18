@@ -1,4 +1,4 @@
-﻿Videa (vetsinou ~700-800MB):
+Videa (vetsinou ~700-800MB):
 https://storage.googleapis.com/software-project-data/apple.tgz
 https://storage.googleapis.com/software-project-data/backpack.tgz
 https://storage.googleapis.com/software-project-data/ball.tgz
@@ -17,6 +17,7 @@ https://storage.googleapis.com/software-project-data/shoe.tgz
 https://storage.googleapis.com/software-project-data/tangerine.tgz
 https://storage.googleapis.com/software-project-data/wood.tgz
 https://storage.googleapis.com/software-project-data/yoyo.tgz
+// TODO nove cloud uloziste?
 
 Data original
 - ruznych 18 objektu
@@ -33,5 +34,5 @@ Processed
 -  Pripadne zvysit pocet vzorku vytvorenim kopii, ktere jsou postupne otacene o 90 stupnu a jsou prehravane odzadu // TODO
 	- Nejsou takova data prilis stejna? 
 	- Nemit radeji vice objektu?
-	- Pokud bych toto udelal, tak budu mit 4 (otaceni o 90 stupnu) * 2 (jednou prehravane odzadu a jednou normalne) * 4438 (pocet vzorku nyni) = 35504 vzorku
+	- Pokud bych toto udelal, tak budu mit 4 (otaceni o 90 stupnu) * 2 (jednou prehravane odzadu a jednou normalne) * 8034 (pocet vzorku nyni) = 64272 vzorku
 
