@@ -1,0 +1,29 @@
+- Using OpenCV to generate images
+- Tutorial for using OpenCV on Mac: https://blogs.wcode.org/2014/10/howto-install-build-and-use-opencv-macosx-10-10/
+    - /Applications/CMake.app/Contents/bin/cmake .
+    - make
+
+- Images
+    - White background
+    - Exactly one pixel is black
+    - For the given video, black pixel is linearly moving along one of the axis
+    - 100x100
+    - That is 10k pixels
+    - For the given black pixel position we need at least two 'free' pixels at a single direction to move the black pixel
+    - This sequence creates a single video
+    - That is 100*100*4 = 40k frames
+    //- That is: 2*(m*(n-2)) + 2*((m-3)*n) = 38800 frames
+    
+- Videos
+    - Videos are made as a sequence of images using ffmpeg
+        - A single image with a given black pixel position is a single frame
+    - NN gets a video as an input and processes every two frames, generating the third frame
+    - Training: 60%
+        - 24k frames
+    - Cross validation: 20%
+        - 8k frames
+    - Testing: 20%
+        - 8k frames
+
+TODO: Pri generovani to zrychlit a rovnou vygenerovany obrazek dat do VideoWriter 
+      misto ulozeni na disku a pak nacteni z disku a az pak do VideWriter

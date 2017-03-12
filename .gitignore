@@ -1,7 +1,9 @@
 # OS
 *.DS_Store
 
+# VS Code Config
+.vscode/*
+
 # Videos
-videos_orig/
-videos_samples/
-videos_slowed_full/
+sp_nn_videos_basic/videos/*
+real_video_data/*
