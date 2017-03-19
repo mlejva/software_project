@@ -5,5 +5,5 @@
 .vscode/*
 
 # Videos
-sp_nn_videos_basic/videos/*
+nn_part_one/videos/*
 real_video_data/*
