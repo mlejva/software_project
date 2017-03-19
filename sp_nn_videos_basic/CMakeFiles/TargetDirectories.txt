@@ -1,3 +1,0 @@
-/Users/vasekmlejnsky/software_project/sp_nn_videos_basic/CMakeFiles/rebuild_cache.dir
-/Users/vasekmlejnsky/software_project/sp_nn_videos_basic/CMakeFiles/edit_cache.dir
-/Users/vasekmlejnsky/software_project/sp_nn_videos_basic/CMakeFiles/GenerateVideos.dir

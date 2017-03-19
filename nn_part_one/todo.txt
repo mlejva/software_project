@@ -1,0 +1,20 @@
+❌ - nevyreseno
+❗ - docasne reseni (warning)
+🚧 - in progress
+✅ - vyreseno
+
+Minor:
+    - 🚧 Vizualizace vstupnich dat 
+    - ✅ Pri generovani rovnou vygenerovany obrazek dat do VideoWriter 
+
+Major:
+    ❌ Vygenerovana vide nejspis stale prochazi kompresi
+        - Ikdyz obrazky, kterem davam do VideoWriteru jsou cele bile a jen jeden pixel je cerny
+          tak kdyz se video prehrava, nektere pixely okoli cerneho pixelu nejsou ciste bile
+    - ✅ Vygenerovana videa se lisi poctem framu
+    - ✅ Prejit z C++ na Python
+    - ✅ Refaktorizace neural_net.py
+    - 🚧 Normalizace vstupni dat
+    - ❌ Denormalizace vystupnich dat
+        - Tj. z vystupu site vygenerovat obrazek    
+    - ❌ TF Summaries
