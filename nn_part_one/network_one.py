@@ -1,5 +1,4 @@
 import tensorflow as tf
-import tensorflow.contrib.layers as tf_layers
 
 # Classes #
 class Network:
@@ -20,35 +19,36 @@ class Network:
             self.gold_output_frames = tf.placeholder(tf.float32, [None, self.frame_height, self.frame_width, 1])
             print("\tself.output_frames: " + str(self.gold_output_frames.get_shape()))
         
-            conv_layer1 = tf_layers.convolution2d(self.input_frames, 24, [3, 3], 1, padding="SAME", normalizer_fn=tf_layers.batch_norm)
+            conv_layer1 = tf.layers.conv2d(self.input_frames, 24, [3, 3], 1, padding="SAME")
             print("\tconv_layer1: " + str(conv_layer1.get_shape()))            
 
-            conv_layer2 = tf_layers.convolution2d(conv_layer1, 24, [3, 3], 1, padding="SAME", normalizer_fn=tf_layers.batch_norm)
+            conv_layer2 = tf.layers.conv2d(conv_layer1, 24, [3, 3], 1, padding="SAME")
             print("\tconv_layer2: " + str(conv_layer2.get_shape()))
 
-            conv_layer3 = tf_layers.convolution2d(conv_layer2, 24, [3, 3], 1, padding="SAME", normalizer_fn=tf_layers.batch_norm)
-            print("\tconv_layer3: " + str(conv_layer3.get_shape()))
+            conv_layer3 = tf.layers.conv2d(conv_layer2, 24, [3, 3], 1, padding="SAME")
+            print("\tconv_layer3: " + str(conv_layer3.get_shape()))            
 
-            conv_layer4 = tf_layers.convolution2d(conv_layer3, 1, [1, 1], 1, padding="SAME", normalizer_fn=tf_layers.batch_norm)
-            print("\tconv_layer4: " + str(conv_layer4.get_shape()))
-
-            output_layer = conv_layer4
+            output_layer = tf.layers.conv2d(conv_layer3, 1, [1, 1], 1, padding="SAME")
             print("\toutput_layer: " + str(output_layer.get_shape()))
-
+            
             self.predictions = output_layer
+
             self.loss = tf.losses.absolute_difference(self.gold_output_frames, self.predictions)
-            tf.summary.scalar("loss function", self.loss)
+            #self.loss = tf.losses.mean_squared_error(self.gold_output_frames, self.predictions)
 
             self.global_step = tf.Variable(0, dtype=tf.int64, trainable=False)
             self.train_step = tf.train.AdamOptimizer().minimize(self.loss, global_step=self.global_step)
-
-            self.accuracy = tf.metrics.accuracy(self.predictions, self.gold_output_frames)
-            #tf.summary.scalar("accuracy", self.accuracy)
+       
+            #self.accuracy = tf.metrics.accuracy(self.gold_output_frames, self.predictions)            
 
             # Summaries
-            self.summaries = tf.summary.merge_all()            
+            self.summaries = {"training": tf.summary.merge([tf.summary.scalar("train/loss", self.loss)])}
+            
+            for dataset in ["validation", "test"]:
+                self.summaries[dataset] = tf.summary.scalar(dataset+"/loss", self.loss)
 
-            init = tf.global_variables_initializer()
+            #init = tf.global_variables_initializer()
+            init = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
             self.session.run(init)
 
             self.session.graph.finalize()           
@@ -64,7 +64,7 @@ class Network:
         args = {"feed_dict": {self.input_frames: input_frames, self.gold_output_frames: output_frames}}
         
         if run_summaries:
-            targets.append(self.summaries)
+            targets.append(self.summaries["training"])
         if run_metadata:
             args["options"] = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
             args["run_metadata"] = tf.RunMetadata()
@@ -80,16 +80,20 @@ class Network:
         loss = results[1]
         predictions = results[2]
         return loss, predictions
-        
 
-    def evaluate(self, input_frames, output_frames):
-         args = {"feed_dict": {self.input_frames: input_frames, self.output_frames: output_frames}}
-         targets = [self.accuracy]
+    def evaluate(self, dataset, input_frames, output_frames, run_summaries=False):
+         args = {"feed_dict": {self.input_frames: input_frames, self.gold_output_frames: output_frames}}
+         targets = [self.predictions, self.loss]
+
+         if run_summaries:
+            targets.append(self.summaries[dataset])
+
          results = self.session.run(targets, **args)
-         return results[0]
 
-    #def run(self, input_frames, output_frames):
-    #    print(self.session.run(self.input_frames, {self.input_frames: input_frames, self.output_frames: output_frames}))
-
-
-        #print(self.session.run(input_frames, feed_dict={self.input_frame_fst: input_frames[0], self.input_frame_fst: input_frames[1], self.output_frame: output_frame}))
+         if run_summaries:
+            summary = results[-1]            
+            self.test_writer.add_summary(summary, self.training_step)
+         
+         predictions = results[0]
+         loss = results[1]
+         return loss, predictions

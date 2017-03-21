@@ -8,19 +8,20 @@ Minor:
     - ✅ Pri generovani rovnou vygenerovany obrazek dat do VideoWriter 
 
 Major:
-    - ❌ Vygenerovana vide nejspis stale prochazi kompresi
+    - ❗ Vygenerovana videa nejspis stale prochazi kompresi
         - Ikdyz obrazky, kterem davam do VideoWriteru jsou cele bile a jen jeden pixel je cerny
           tak kdyz se video prehrava, nektere pixely okoli cerneho pixelu nejsou ciste bile
     - ✅ Vygenerovana videa se lisi poctem framu
     - ✅ Prejit z C++ na Python
-    - ✅ Refaktorizace neural_net.py    
-    - ❌ Denormalizace vystupnich dat
-        - Tj. z vystupu site vygenerovat obrazek    
+    - ✅ Refaktorizace neural_net.py        
     - ✅ TF Summaries
     - ❌ Zpracovavat video ve vice vlaknech zaroven
 
     - ✅ Overit vstupni framy site 
     - ✅ Ukladat vygenerovane framy site
-    - ❌ Network eval
+    - ✅ VideoPreprocessor - get_validation_dataset, get_test_dataset
+    - ✅ Network eval
     - ❌ Normalizace vstupnich dat
-    - ❌ Denormalizace vystupnich dat
+    - ❌ Denormalizace vystupnich dat     
+    - ❌ TF Summary nebere zvlast "test" set
+    - ❌❌❌ vicevlaknove zpracovani videi
