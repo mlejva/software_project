@@ -234,35 +234,38 @@ def artifacts_workaround(data):
 
     return data
 
-if __name__ == "__main__":        
-    vp = VideoPreprocessor("./videos", ".mp4", batch_size=5)
+if __name__ == "__main__":
+    
+    batch_size = 5  
+    epochs = 20
+
+    vp = VideoPreprocessor("./videos", ".mp4", batch_size=batch_size)
     vp.prepare_datasets(0.6, 0.2, 0.2)
     (height, width) = vp.get_training_frame_shape()
-
-    network = Network(height, width)
-    network.construct()
     
-    epochs = 10
+    exp_name = "batch-%d_epochs-%d" % (batch_size, epochs)
+    network = Network(height, width, exp_name)
+    network.construct()
 
     for i in range(epochs):
-        epoch_dir_name = "./frames-%d" % i
+        epoch_dir_name = "./saved_frames/%s/epoch-%d" % (exp_name, i)
         if os.path.exists(epoch_dir_name):
             shutil.rmtree(epoch_dir_name)
-        os.mkdir(epoch_dir_name)
+        os.makedirs(epoch_dir_name)
 
         vp.shuffle_training_data()
         j = 0
         while i == vp.epochs_completed:
-            input_name_path = epoch_dir_name + "/input-frames-%d" % j            
-            gold_output_name_path = epoch_dir_name + "/output-frames-%d" % j
-            prediction_name_path = epoch_dir_name + "/prediction-frames-%d" % j
+            #input_name_path = epoch_dir_name + "/input-frames-%d" % j            
+            #gold_output_name_path = epoch_dir_name + "/gold-output-frames-%d" % j
+            #prediction_name_path = epoch_dir_name + "/prediction-frames-%d" % j
 
             input_frames, gold_output_frames = vp.next_batch(grayscale=True)
             input_frames = artifacts_workaround(input_frames)
             gold_output_frames = artifacts_workaround(gold_output_frames)
 
-            save_input_frames(input_name_path, input_frames)
-            save_gold_output_frames(gold_output_name_path, gold_output_frames)
+            #save_input_frames(input_name_path, input_frames)
+            #save_gold_output_frames(gold_output_name_path, gold_output_frames)
 
             input_frames, input_min, input_max = normalize(input_frames)
             gold_output_frames, _, _ = normalize(gold_output_frames) 
@@ -272,16 +275,19 @@ if __name__ == "__main__":
             print("\tNetwork training step: %d" % (network.training_step + 1))
             loss, predictions = network.train(input_frames, gold_output_frames, True, network.training_step == 0)
             print("\tLoss: %f" % loss)
-            ####################
 
-            predictions = denormalize(predictions, input_min, input_max)
-            save_prediction_frames(prediction_name_path, predictions)
+            #predictions = denormalize(predictions, input_min, input_max)
+            #save_prediction_frames(prediction_name_path, predictions)
 
             j += 1
+            ####################
 
         # Eval network on validation set here
         print("\nRunning validation...")
         input_frames_val, gold_output_frames_val = vp.validation_dataset(grayscale=True)
+        input_frames_val = artifacts_workaround(input_frames_val)
+        gold_output_frames_val = artifacts_workaround(gold_output_frames_val)
+
         input_frames_val, _, _ = normalize(input_frames_val)
         gold_output_frames_val, _, _ = normalize(gold_output_frames_val)
 
@@ -290,9 +296,15 @@ if __name__ == "__main__":
         ####################
 
         # Eval network on test set here
-        print("\nRunning testing...")
+        print("Running testing...")
         input_frames_test, gold_output_frames_test = vp.testing_dataset(grayscale=True)
-        # TODO: Save input frames!!!!
+        input_frames_test = artifacts_workaround(input_frames_test)
+        gold_output_frames_val = artifacts_workaround(gold_output_frames_val)
+
+        input_name_path = epoch_dir_name + "/test-input-frames-%d" % i            
+        gold_output_name_path = epoch_dir_name + "/test-gold-output-frames-%d" % i
+        save_input_frames(input_name_path, input_frames_test)
+        save_gold_output_frames(gold_output_name_path, gold_output_frames_val)
 
         input_frames_test, input_test_min, input_test_max = normalize(input_frames_test)
         gold_output_frames_test, _, _ = normalize(gold_output_frames_test)

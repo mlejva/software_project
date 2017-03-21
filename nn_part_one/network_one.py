@@ -2,14 +2,14 @@ import tensorflow as tf
 
 # Classes #
 class Network:
-    def __init__(self, frame_height, frame_width):
+    def __init__(self, frame_height, frame_width, exp_name):
         self.frame_height = frame_height
         self.frame_width = frame_width
         graph = tf.Graph()
         self.session = tf.Session(graph = graph)        
     
-        self.train_writer = tf.summary.FileWriter("./logs/network-one/train", self.session.graph)
-        self.test_writer = tf.summary.FileWriter("./logs/network-one/test")
+        self.train_writer = tf.summary.FileWriter("./logs/network-one/train/%s" % exp_name, self.session.graph)
+        self.test_writer = tf.summary.FileWriter("./logs/network-one/test/%s" % exp_name)
 
     def construct(self):
         print("================")

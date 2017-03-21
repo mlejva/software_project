@@ -6,6 +6,8 @@
 
 # Videos
 nn_part_one/videos/
+nn_part_one/saved_frame/
 nn_part_one/frames-*/*
 nn_part_one/img-*/*
+
 real_video_data/*
