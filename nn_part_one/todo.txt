@@ -4,11 +4,11 @@
 ✅ - vyreseno
 
 Minor:
-    - 🚧 Vizualizace vstupnich dat 
+    - ❌ Vizualizace vstupnich dat 
     - ✅ Pri generovani rovnou vygenerovany obrazek dat do VideoWriter 
 
 Major:
-    ❌ Vygenerovana vide nejspis stale prochazi kompresi
+    - ❌ Vygenerovana vide nejspis stale prochazi kompresi
         - Ikdyz obrazky, kterem davam do VideoWriteru jsou cele bile a jen jeden pixel je cerny
           tak kdyz se video prehrava, nektere pixely okoli cerneho pixelu nejsou ciste bile
     - ✅ Vygenerovana videa se lisi poctem framu
@@ -17,8 +17,10 @@ Major:
     - ❌ Denormalizace vystupnich dat
         - Tj. z vystupu site vygenerovat obrazek    
     - ✅ TF Summaries
-    
-    - ❌ Overit vstupni framy site 
-    - ❌ Ukladat vygenerovane framy site
-    - ❌ Normalizace vstupni dat
+    - ❌ Zpracovavat video ve vice vlaknech zaroven
+
+    - ✅ Overit vstupni framy site 
+    - ✅ Ukladat vygenerovane framy site
+    - ❌ Network eval
+    - ❌ Normalizace vstupnich dat
     - ❌ Denormalizace vystupnich dat

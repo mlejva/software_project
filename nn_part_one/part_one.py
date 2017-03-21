@@ -73,10 +73,11 @@ class VideoPreprocessor:
         range_end = range_start + self.__batch_size
         current_batch_set = self.__training_set[range_start:range_end]
 
-        frames_in_batch = self.__batch_size * self.__training_video_frame_count
+        # -2 because fst_frame is at i, snd_frame at i+1 and gold_output_frame at i+2
+        frames_in_batch = self.__batch_size * (self.__training_video_frame_count - 2)
         
         # TODO: Add version for not grayscale option    
-        input_frames_batch = np.empty([frames_in_batch, self.__training_video_frame_height, self.__training_video_frame_width, 2], dtype=np.float64)
+        input_frames_batch = np.empty([frames_in_batch , self.__training_video_frame_height, self.__training_video_frame_width, 2], dtype=np.float64)
         gold_output_frames_batch = np.empty([frames_in_batch, self.__training_video_frame_height, self.__training_video_frame_width, 1], dtype=np.float64)
         
         for i in range(len(current_batch_set)):
@@ -128,7 +129,7 @@ class VideoPreprocessor:
         return frame
 ##########
 # Global Methods #
-def normalize(data):
+def normalize(data):   
     data_min = data.min()
     data_max = data.max()
     
@@ -140,8 +141,51 @@ def denormalize(normalized, orig_min, orig_max):
     return denormalized
 
 
-if __name__ == "__main__":    
-    vp = VideoPreprocessor("./videos", ".mp4", batch_size=10)
+def save_input_frames(path, input_frames):
+    if os.path.exists(path):
+        shutil.rmtree(path)
+    os.mkdir(path)
+
+    input_length = np.size(input_frames, 0)
+    for i in range(input_length):
+        input_fst = input_frames[i, :, :, 0]
+        input_snd = input_frames[i, :, :, 1]
+
+        cv2.imwrite(path+"/fst-%d.png" % i, input_fst)
+        cv2.imwrite(path+"/snd-%d.png" % i, input_snd)
+
+def save_gold_output_frames(path, gold_output_frames):
+    if os.path.exists(path):
+        shutil.rmtree(path)
+    os.mkdir(path)
+
+    gold_output_length = np.size(gold_output_frames, 0)    
+    for i in range(gold_output_length):
+        gold_output = gold_output_frames[i]
+        cv2.imwrite(path+"/gold-%d.png" % i, gold_output)
+
+def save_prediction_frames(path, prediction_frames):
+    if os.path.exists(path):
+        shutil.rmtree(path)
+    os.mkdir(path)
+
+    prediction_length = np.size(prediction_frames, 0)
+    for i in range(prediction_length):
+        prediction = prediction_frames[i]
+        cv2.imwrite(path+"/prediction-%d.png" % i, prediction)
+
+
+def artifacts_workaround(data):
+     # TODO: Remove, workaround because video has artifacts
+    low_values_indices = data[:] < 200
+    data[low_values_indices] = 0
+    high_value_indices = data[:] > 200
+    data[high_value_indices] = 255
+
+    return data
+
+if __name__ == "__main__":        
+    vp = VideoPreprocessor("./videos", ".mp4", batch_size=1)
     vp.prepare_datasets(0.6, 0.2, 0.2)
     (height, width) = vp.get_training_frame_shape()
 
@@ -151,18 +195,39 @@ if __name__ == "__main__":
     epochs = 5
 
     for i in range(epochs):
+        epoch_dir_name = "./frames-%d" % i
+        if os.path.exists(epoch_dir_name):
+            shutil.rmtree(epoch_dir_name)
+        os.mkdir(epoch_dir_name)
+
         vp.shuffle_training_data()
+        j = 0
         while i == vp.epochs_completed:
+            input_name_path = epoch_dir_name + "/input-frames-%d" % j            
+            gold_output_name_path = epoch_dir_name + "/output-frames-%d" % j
+            prediction_name_path = epoch_dir_name + "/prediction-frames-%d" % j
+
             input_frames, gold_output_frames = vp.next_batch(grayscale=True)
-            input_frames, _, _ = normalize(input_frames)
+            input_frames = artifacts_workaround(input_frames)
+            gold_output_frames = artifacts_workaround(gold_output_frames)
+
+            save_input_frames(input_name_path, input_frames)
+            save_gold_output_frames(gold_output_name_path, gold_output_frames)
+
+            input_frames, input_min, input_max = normalize(input_frames)
             gold_output_frames, _, _ = normalize(gold_output_frames) 
 
             # Train network here
             print("Training network...")
             print("\tNetwork training step: %d" % (network.training_step + 1))
-            #network.train(input_frames, gold_output_frames, network.training_step % 100 == 0)
-            loss = network.train(input_frames, gold_output_frames, True, network.training_step == 0)
+            loss, predictions = network.train(input_frames, gold_output_frames, True, network.training_step == 0)
             print("\tLoss: %f" % loss)
+            ####################
+
+            predictions = denormalize(predictions, input_min, input_max)
+            save_prediction_frames(prediction_name_path, predictions)
+
+            j += 1
 
         # Eval network on validation set here
 

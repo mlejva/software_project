@@ -60,7 +60,7 @@ class Network:
         return self.session.run(self.global_step)
 
     def train(self, input_frames, output_frames, run_summaries=False, run_metadata=False):
-        targets = [self.train_step, self.loss]
+        targets = [self.train_step, self.loss, self.predictions]
         args = {"feed_dict": {self.input_frames: input_frames, self.gold_output_frames: output_frames}}
         
         if run_summaries:
@@ -78,8 +78,9 @@ class Network:
             self.train_writer.add_run_metadata(args["run_metadata"], "step%d" % (self.training_step - 1))
 
         loss = results[1]
-        return loss
-        #print(results[1])
+        predictions = results[2]
+        return loss, predictions
+        
 
     def evaluate(self, input_frames, output_frames):
          args = {"feed_dict": {self.input_frames: input_frames, self.output_frames: output_frames}}
