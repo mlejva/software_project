@@ -13,8 +13,12 @@ Major:
           tak kdyz se video prehrava, nektere pixely okoli cerneho pixelu nejsou ciste bile
     - ✅ Vygenerovana videa se lisi poctem framu
     - ✅ Prejit z C++ na Python
-    - ✅ Refaktorizace neural_net.py
-    - 🚧 Normalizace vstupni dat
+    - ✅ Refaktorizace neural_net.py    
     - ❌ Denormalizace vystupnich dat
         - Tj. z vystupu site vygenerovat obrazek    
-    - ❌ TF Summaries
+    - ✅ TF Summaries
+    
+    - ❌ Overit vstupni framy site 
+    - ❌ Ukladat vygenerovane framy site
+    - ❌ Normalizace vstupni dat
+    - ❌ Denormalizace vystupnich dat

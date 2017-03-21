@@ -82,10 +82,13 @@ def generate_black_dot_videos(fourcc, fps, direction, size, reverse):
 if __name__ == "__main__":
     frame_size = 20
     fps = 10.0
-    fourcc = cv2.VideoWriter_fourcc(*"hfyu")
+    fourcc = cv2.VideoWriter_fourcc(*"hfyu")    
 
-    shutil.rmtree("./videos")
-    os.makedirs("./videos")
+    if os.path.exists("./videos"):
+        shutil.rmtree("./videos")
+        os.makedirs("./videos")
+    else:
+        os.makedirs("./videos")
 
     generate_black_dot_videos(fourcc, fps, Direction.UP_DOWN, frame_size, False)
     generate_black_dot_videos(fourcc, fps, Direction.UP_DOWN, frame_size, True)
