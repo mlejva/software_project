@@ -19,6 +19,7 @@ class Network:
             self.gold_output_frames = tf.placeholder(tf.float32, [None, self.frame_height, self.frame_width, 1])
             print("\tself.output_frames: " + str(self.gold_output_frames.get_shape()))
         
+            # base model #
             conv_layer1 = tf.layers.conv2d(self.input_frames, 24, [3, 3], 1, padding="SAME")
             print("\tconv_layer1: " + str(conv_layer1.get_shape()))            
 
@@ -26,15 +27,77 @@ class Network:
             print("\tconv_layer2: " + str(conv_layer2.get_shape()))
 
             conv_layer3 = tf.layers.conv2d(conv_layer2, 24, [3, 3], 1, padding="SAME")
-            print("\tconv_layer3: " + str(conv_layer3.get_shape()))            
+            print("\tconv_layer3: " + str(conv_layer3.get_shape()))                                                                   
 
             output_layer = tf.layers.conv2d(conv_layer3, 1, [1, 1], 1, padding="SAME")
             print("\toutput_layer: " + str(output_layer.get_shape()))
-            
-            self.predictions = output_layer
 
-            self.loss = tf.losses.absolute_difference(self.gold_output_frames, self.predictions)
-            #self.loss = tf.losses.mean_squared_error(self.gold_output_frames, self.predictions)
+            # conv-7 model #
+            '''
+            conv_layer1 = tf.layers.conv2d(self.input_frames, 24, [3, 3], 1, padding="SAME")
+            print("\tconv_layer1: " + str(conv_layer1.get_shape()))            
+
+            conv_layer2 = tf.layers.conv2d(conv_layer1, 24, [3, 3], 1, padding="SAME")
+            print("\tconv_layer2: " + str(conv_layer2.get_shape()))
+
+            conv_layer3 = tf.layers.conv2d(conv_layer2, 24, [3, 3], 1, padding="SAME")
+            print("\tconv_layer3: " + str(conv_layer3.get_shape()))
+
+            conv_layer4 = tf.layers.conv2d(conv_layer3, 24, [3, 3], 1, padding="SAME")
+            print("\tconv_layer4: " + str(conv_layer4.get_shape()))                   
+
+            conv_layer5 = tf.layers.conv2d(conv_layer4, 24, [3, 3], 1, padding="SAME")
+            print("\tconv_layer5: " + str(conv_layer5.get_shape()))                   
+
+            conv_layer6 = tf.layers.conv2d(conv_layer5, 24, [3, 3], 1, padding="SAME")
+            print("\tconv_layer6: " + str(conv_layer6.get_shape()))                   
+
+            output_layer = tf.layers.conv2d(conv_layer6, 1, [1, 1], 1, padding="SAME")
+            print("\toutput_layer: " + str(output_layer.get_shape()))
+            '''
+
+            # base-channels-48 model #   
+            '''
+            conv_layer1 = tf.layers.conv2d(self.input_frames, 48, [3, 3], 1, padding="SAME")
+            print("\tconv_layer1: " + str(conv_layer1.get_shape()))            
+
+            conv_layer2 = tf.layers.conv2d(conv_layer1, 48, [3, 3], 1, padding="SAME")
+            print("\tconv_layer2: " + str(conv_layer2.get_shape()))
+
+            conv_layer3 = tf.layers.conv2d(conv_layer2, 48, [3, 3], 1, padding="SAME")
+            print("\tconv_layer3: " + str(conv_layer3.get_shape()))                                                                   
+
+            output_layer = tf.layers.conv2d(conv_layer3, 1, [1, 1], 1, padding="SAME")
+            print("\toutput_layer: " + str(output_layer.get_shape()))
+            '''
+
+            # conv-7-channels-48 model #            
+            '''
+            conv_layer1 = tf.layers.conv2d(self.input_frames, 48, [3, 3], 1, padding="SAME")
+            print("\tconv_layer1: " + str(conv_layer1.get_shape()))            
+
+            conv_layer2 = tf.layers.conv2d(conv_layer1, 48, [3, 3], 1, padding="SAME")
+            print("\tconv_layer2: " + str(conv_layer2.get_shape()))
+
+            conv_layer3 = tf.layers.conv2d(conv_layer2, 48, [3, 3], 1, padding="SAME")
+            print("\tconv_layer3: " + str(conv_layer3.get_shape()))
+
+            conv_layer4 = tf.layers.conv2d(conv_layer3, 48, [3, 3], 1, padding="SAME")
+            print("\tconv_layer4: " + str(conv_layer4.get_shape()))                   
+
+            conv_layer5 = tf.layers.conv2d(conv_layer4, 48, [3, 3], 1, padding="SAME")
+            print("\tconv_layer5: " + str(conv_layer5.get_shape()))                   
+
+            conv_layer6 = tf.layers.conv2d(conv_layer5, 48, [3, 3], 1, padding="SAME")
+            print("\tconv_layer6: " + str(conv_layer6.get_shape()))                   
+
+            output_layer = tf.layers.conv2d(conv_layer6, 1, [1, 1], 1, padding="SAME")
+            print("\toutput_layer: " + str(output_layer.get_shape()))
+            '''
+
+            self.predictions = output_layer
+                        
+            self.loss = tf.losses.mean_squared_error(self.gold_output_frames, self.predictions)
 
             self.global_step = tf.Variable(0, dtype=tf.int64, trainable=False)
             self.train_step = tf.train.AdamOptimizer().minimize(self.loss, global_step=self.global_step)

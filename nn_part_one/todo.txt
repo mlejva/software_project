@@ -1,10 +1,11 @@
 ❌ - nevyreseno
-❗ - docasne reseni (warning)
+❗ - docasne reseni
 🚧 - in progress
 ✅ - vyreseno
 
 Minor:
     - ❌ Vizualizace vstupnich dat 
+    - (❌ Vicevlaknove zpracovani videi)
     - ✅ Pri generovani rovnou vygenerovany obrazek dat do VideoWriter 
 
 Major:
@@ -15,13 +16,16 @@ Major:
     - ✅ Prejit z C++ na Python
     - ✅ Refaktorizace neural_net.py        
     - ✅ TF Summaries
-    - ❌ Zpracovavat video ve vice vlaknech zaroven
-
     - ✅ Overit vstupni framy site 
     - ✅ Ukladat vygenerovane framy site
     - ✅ VideoPreprocessor - get_validation_dataset, get_test_dataset
     - ✅ Network eval
     - ❌ Normalizace vstupnich dat
     - ❌ Denormalizace vystupnich dat     
-    - ❌ TF Summary nebere zvlast "test" set
-    - ❌❌❌ vicevlaknove zpracovani videi
+    - ✅ TF Summary nebere zvlast "test" set    
+    - ✅ VP samostatne
+    
+
+TODO:
+    - Vyzkouset pricteni meanu jako artifworkaround
+    - Pustit base-model na 300 epoch bez artif workaround
