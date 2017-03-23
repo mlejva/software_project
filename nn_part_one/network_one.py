@@ -20,6 +20,7 @@ class Network:
             print("\tself.output_frames: " + str(self.gold_output_frames.get_shape()))
         
             # base model #
+            '''
             conv_layer1 = tf.layers.conv2d(self.input_frames, 24, [3, 3], 1, padding="SAME")
             print("\tconv_layer1: " + str(conv_layer1.get_shape()))            
 
@@ -31,6 +32,7 @@ class Network:
 
             output_layer = tf.layers.conv2d(conv_layer3, 1, [1, 1], 1, padding="SAME")
             print("\toutput_layer: " + str(output_layer.get_shape()))
+            '''
 
             # conv-7 model #
             '''
@@ -95,9 +97,102 @@ class Network:
             print("\toutput_layer: " + str(output_layer.get_shape()))
             '''
 
+            # base-channels-9 model #
+            '''
+            conv_layer1 = tf.layers.conv2d(self.input_frames, 9, [3, 3], 1, padding="SAME")
+            print("\tconv_layer1: " + str(conv_layer1.get_shape()))            
+
+            conv_layer2 = tf.layers.conv2d(conv_layer1, 9, [3, 3], 1, padding="SAME")
+            print("\tconv_layer2: " + str(conv_layer2.get_shape()))
+
+            conv_layer3 = tf.layers.conv2d(conv_layer2, 9, [3, 3], 1, padding="SAME")
+            print("\tconv_layer3: " + str(conv_layer3.get_shape()))                                                                   
+
+            output_layer = tf.layers.conv2d(conv_layer3, 1, [1, 1], 1, padding="SAME")
+            print("\toutput_layer: " + str(output_layer.get_shape()))
+            '''                        
+
+            # conv-2-channels-8 model #
+            '''
+            conv_layer1 = tf.layers.conv2d(self.input_frames, 8, [3, 3], 1, padding="SAME")
+            print("\tconv_layer1: " + str(conv_layer1.get_shape()))                                                                                           
+
+            output_layer = tf.layers.conv2d(conv_layer1, 1, [1, 1], 1, padding="SAME")
+            print("\toutput_layer: " + str(output_layer.get_shape()))
+            '''
+
+            # conv-2-channels-4 model #
+            '''
+            conv_layer1 = tf.layers.conv2d(self.input_frames, 4, [3, 3], 1, padding="SAME")
+            print("\tconv_layer1: " + str(conv_layer1.get_shape()))                                                                                           
+
+            output_layer = tf.layers.conv2d(conv_layer1, 1, [1, 1], 1, padding="SAME")
+            print("\toutput_layer: " + str(output_layer.get_shape()))
+            '''
+
+            # conv-2-channels-18 model #
+            '''
+            conv_layer1 = tf.layers.conv2d(self.input_frames, 18, [3, 3], 1, padding="SAME")
+            print("\tconv_layer1: " + str(conv_layer1.get_shape()))                                                                                           
+
+            output_layer = tf.layers.conv2d(conv_layer1, 1, [1, 1], 1, padding="SAME")
+            print("\toutput_layer: " + str(output_layer.get_shape()))
+            '''
+
+            # conv-2-channels-24 model #
+            conv_layer1 = tf.layers.conv2d(self.input_frames, 24, [3, 3], 1, padding="SAME")
+            print("\tconv_layer1: " + str(conv_layer1.get_shape()))                                                                                           
+
+            output_layer = tf.layers.conv2d(conv_layer1, 1, [1, 1], 1, padding="SAME")
+            print("\toutput_layer: " + str(output_layer.get_shape()))
+
+            # conv-2-channels-24-kernel-1-1 model #
+            '''
+            conv_layer1 = tf.layers.conv2d(self.input_frames, 24, [1, 1], 1, padding="SAME")
+            print("\tconv_layer1: " + str(conv_layer1.get_shape()))                                                                                           
+
+            output_layer = tf.layers.conv2d(conv_layer1, 1, [1, 1], 1, padding="SAME")
+            print("\toutput_layer: " + str(output_layer.get_shape()))
+            '''
+
+            # conv-2-channels-24-kernel-2-2 model #
+            '''
+            conv_layer1 = tf.layers.conv2d(self.input_frames, 24, [2, 2], 1, padding="SAME")
+            print("\tconv_layer1: " + str(conv_layer1.get_shape()))                                                                                           
+
+            output_layer = tf.layers.conv2d(conv_layer1, 1, [1, 1], 1, padding="SAME")
+            print("\toutput_layer: " + str(output_layer.get_shape()))
+            '''
+
+            # conv-3-channels-24-kernel-1-3_3-1 model #
+            '''
+            conv_layer1 = tf.layers.conv2d(self.input_frames, 24, [1, 3], 1, padding="SAME")
+            print("\tconv_layer1: " + str(conv_layer1.get_shape()))                         
+
+            conv_layer2 = tf.layers.conv2d(conv_layer1, 24, [3, 1], 1, padding="SAME")
+            print("\tconv_layer1: " + str(conv_layer1.get_shape()))                                                                                           
+
+            output_layer = tf.layers.conv2d(conv_layer2, 1, [1, 1], 1, padding="SAME")
+            print("\toutput_layer: " + str(output_layer.get_shape()))
+            '''
+
+            # conv-2-channels-24-loss-abs-diff model #
+            '''
+            conv_layer1 = tf.layers.conv2d(self.input_frames, 24, [3, 3], 1, padding="SAME")
+            print("\tconv_layer1: " + str(conv_layer1.get_shape()))                                                                                           
+
+            output_layer = tf.layers.conv2d(conv_layer1, 1, [1, 1], 1, padding="SAME")
+            print("\toutput_layer: " + str(output_layer.get_shape()))
+            '''                    
+        
             self.predictions = output_layer
+
+            #target_pixel = tf.argmax(output_layer, -1)
+            #self.predictions = tf.constant
+
                         
             self.loss = tf.losses.mean_squared_error(self.gold_output_frames, self.predictions)
+            #self.loss = tf.losses.absolute_difference(self.gold_output_frames, self.predictions)
 
             self.global_step = tf.Variable(0, dtype=tf.int64, trainable=False)
             self.train_step = tf.train.AdamOptimizer().minimize(self.loss, global_step=self.global_step)

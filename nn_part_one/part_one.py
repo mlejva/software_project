@@ -10,6 +10,19 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Global Methods #
+'''
+def normalize_range(data, start, end):
+    data_min = data.min()
+    data_max = data.max()
+    
+    normalized = (end - start)*((data - data_min)/(data_max - data_min)) + start
+    return normalized, data_min, data_max
+
+def denormalize_range(normalized, start, end, orig_min, orig_max):
+    denormalized = ((normalized - start) * (orig_max - orig_min) / (end - start)) + orig_min
+    return denormalized
+'''
+
 def normalize(data):
     data_min = data.min()
     data_max = data.max()
@@ -66,13 +79,13 @@ def save_prediction_frames(path, prediction_frames):
 if __name__ == "__main__":
     
     batch_size = 7
-    epochs = 20
+    epochs = 50
 
     vp = VideoPreprocessor("./videos", ".mp4", batch_size=batch_size)
     vp.prepare_datasets(0.6, 0.2, 0.2)
     (height, width) = vp.get_training_frame_shape()
     
-    exp_name = "base-model_norm-range_batch-%d_epochs-%d" % (batch_size, epochs)
+    exp_name = "conv-2-channels-24-model_norm-mean_batch-%d_epochs-%d" % (batch_size, epochs)
     network = Network(height, width, exp_name)
     network.construct()
 
@@ -87,10 +100,10 @@ if __name__ == "__main__":
         while i == vp.epochs_completed:            
             input_frames, gold_output_frames = vp.next_batch(grayscale=True)            
 
-            input_frames, input_min, input_max = normalize(input_frames)
-            gold_output_frames, _, _ = normalize(gold_output_frames)                         
-            #input_frames, _ = normalize_mean(input_frames)
-            #gold_output_frames, _ = normalize_mean(gold_output_frames)
+            #input_frames, input_min, input_max = normalize(input_frames)
+            #gold_output_frames, _, _ = normalize(gold_output_frames)                         
+            input_frames, _ = normalize_mean(input_frames)
+            gold_output_frames, _ = normalize_mean(gold_output_frames)
 
             # Train network here
             print("Training network...")
@@ -104,10 +117,10 @@ if __name__ == "__main__":
         print("\nRunning validation...")
         input_frames_val, gold_output_frames_val = vp.validation_dataset(grayscale=True)        
 
-        input_frames_val, _, _ = normalize(input_frames_val)
-        gold_output_frames_val, _, _ = normalize(gold_output_frames_val)
-        #input_frames_val, _ = normalize_mean(input_frames_val)
-        #gold_output_frames_val, _ = normalize_mean(gold_output_frames_val)
+        #input_frames_val, _, _ = normalize(input_frames_val)
+        #gold_output_frames_val, _, _ = normalize(gold_output_frames_val)
+        input_frames_val, _ = normalize_mean(input_frames_val)
+        gold_output_frames_val, _ = normalize_mean(gold_output_frames_val)
 
         loss, _ = network.evaluate("validation", input_frames_val, gold_output_frames_val, True)
         print("\n\tLoss on validation: ", loss)
@@ -124,16 +137,16 @@ if __name__ == "__main__":
         save_input_frames(input_name_path, input_frames_test)
         save_gold_output_frames(gold_output_name_path, gold_output_frames_test)
 
-        input_frames_test, input_test_min, input_test_max = normalize(input_frames_test)
-        gold_output_frames_test, _, _ = normalize(gold_output_frames_test)
-        #input_frames_test, input_test_mean = normalize_mean(input_frames_test)
-        #gold_output_frames_test, _ = normalize_mean(gold_output_frames_test)
+        #input_frames_test, input_test_min, input_test_max = normalize(input_frames_test)
+        #gold_output_frames_test, _, _ = normalize(gold_output_frames_test)
+        input_frames_test, input_test_mean = normalize_mean(input_frames_test)
+        gold_output_frames_test, _ = normalize_mean(gold_output_frames_test)
 
         loss, test_predictions = network.evaluate("test", input_frames_test, gold_output_frames_test, True)
         print("\n\tLoss on testing: ", loss)
 
-        test_predictions = denormalize(test_predictions, input_test_min, input_test_max)
-        #test_predictions = denormalize_mean(test_predictions, input_test_mean)
+        #test_predictions = denormalize(test_predictions, input_test_min, input_test_max)
+        test_predictions = denormalize_mean(test_predictions, input_test_mean)
         
         save_prediction_frames(test_prediction_name_path, test_predictions)
         ####################
