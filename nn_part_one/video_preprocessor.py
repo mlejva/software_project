@@ -5,6 +5,98 @@ import numpy as np
 from random import shuffle
 from math import ceil
 
+# Global Methods #
+'''
+def normalize_range(data, start, end):
+    data_min = data.min()
+    data_max = data.max()
+    
+    normalized = (end - start)*((data - data_min)/(data_max - data_min)) + start
+    return normalized, data_min, data_max
+
+def denormalize_range(normalized, start, end, orig_min, orig_max):
+    denormalized = ((normalized - start) * (orig_max - orig_min) / (end - start)) + orig_min
+    return denormalized
+'''
+def normalize(data):
+    data_min = data.min()
+    data_max = data.max()
+    
+    normalized = (data - data_min)/(data_max - data_min)    
+    return normalized, data_min, data_max   
+
+def denormalize(normalized, orig_min, orig_max):    
+    denormalized = (normalized*(orig_max - orig_min)) + orig_min
+    return denormalized
+
+def normalize_mean(data):
+    mean = np.mean(data)
+    data -= mean
+    return data, mean
+
+def denormalize_mean(normalized, orig_mean):
+    denormalized = normalized + orig_mean
+    return denormalized
+
+def save_input_frames(path, input_frames):
+    if os.path.exists(path):
+        shutil.rmtree(path)
+    os.mkdir(path)
+
+    input_length = np.size(input_frames, 0)
+    for i in range(input_length):
+        input_fst = input_frames[i, :, :, 0]
+        input_snd = input_frames[i, :, :, 1]
+
+        cv2.imwrite(path+"/fst-%d.png" % i, input_fst)
+        cv2.imwrite(path+"/snd-%d.png" % i, input_snd)
+
+def save_gold_output_frames(path, gold_output_frames):
+    if os.path.exists(path):
+        shutil.rmtree(path)
+    os.mkdir(path)    
+
+    gold_output_length = np.size(gold_output_frames, 0)    
+    for i in range(gold_output_length):
+        gold_output = gold_output_frames[i]
+        cv2.imwrite(path+"/gold-%d.png" % i, gold_output)
+
+def save_prediction_frames(path, prediction_frames):
+    if os.path.exists(path):
+        shutil.rmtree(path)
+    os.mkdir(path)
+
+    batch_size = np.size(prediction_frames, 0)
+    frame_height = np.size(prediction_frames, 1)
+    frame_width = np.size(prediction_frames, 2)
+
+    for frame_index in range(batch_size):
+        frame = np.zeros([frame_height, frame_width, 1])
+        for i in range(frame_height):
+            for j in range(frame_width):
+                is_not_target, is_target = prediction_frames[frame_index, i, j, :]
+                if is_target >= is_not_target:
+                    frame[i, j] = 0
+                else:
+                    frame[i, j] = 255
+
+        cv2.imwrite(path+"/prediction-%d.png" % frame_index, frame)
+
+def convert_gold_output_to_onehot(gold_outputs):    
+    batch_size = np.size(gold_outputs, 0)
+    frame_height = np.size(gold_outputs, 1)
+    frame_width = np.size(gold_outputs, 2)
+
+    for batch in range(batch_size):
+        for i in range(frame_height):
+            for j in range(frame_width):
+                pixel_val = gold_outputs[batch, i, j, :]
+                if pixel_val >= 200: # White
+                    gold_outputs[batch, i, j, :] = 0
+                else: # Black
+                    gold_outputs[batch, i, j, :] = 1
+    return gold_outputs
+
 class VideoPreprocessor:
     def __init__(self, path_to_videos, extension, batch_size=None):
         if batch_size == None:

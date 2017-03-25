@@ -16,7 +16,7 @@ class Network:
         with self.session.graph.as_default():
             self.input_frames = tf.placeholder(tf.float32, [None, self.frame_height, self.frame_width, 2])
             print("\tself.input_frames: " + str(self.input_frames.get_shape()))            
-            self.gold_output_frames = tf.placeholder(tf.float32, [None, self.frame_height, self.frame_width, 1])
+            self.gold_output_frames = tf.placeholder(tf.int32, [None, self.frame_height, self.frame_width, 1])
             print("\tself.output_frames: " + str(self.gold_output_frames.get_shape()))
         
             # base model #
@@ -140,11 +140,13 @@ class Network:
             '''
 
             # conv-2-channels-24 model #
+            '''
             conv_layer1 = tf.layers.conv2d(self.input_frames, 24, [3, 3], 1, padding="SAME")
             print("\tconv_layer1: " + str(conv_layer1.get_shape()))                                                                                           
 
             output_layer = tf.layers.conv2d(conv_layer1, 1, [1, 1], 1, padding="SAME")
             print("\toutput_layer: " + str(output_layer.get_shape()))
+            '''
 
             # conv-2-channels-24-kernel-1-1 model #
             '''
@@ -183,21 +185,32 @@ class Network:
 
             output_layer = tf.layers.conv2d(conv_layer1, 1, [1, 1], 1, padding="SAME")
             print("\toutput_layer: " + str(output_layer.get_shape()))
+
+            self.loss = tf.losses.absolute_difference(self.gold_output_frames, self.predictions)
             '''                    
         
-            self.predictions = output_layer
+            # crossentropy-loss model #
+            conv_layer1 = tf.layers.conv2d(self.input_frames, 24, [5, 5], 1, padding="SAME")
+            print("\tconv_layer1: " + str(conv_layer1.get_shape()))                                                                                           
 
-            #target_pixel = tf.argmax(output_layer, -1)
-            #self.predictions = tf.constant
+            output_layer = tf.layers.conv2d(conv_layer1, 2, [1, 1], 1, padding="SAME")
+            print("\toutput_layer: " + str(output_layer.get_shape()))            
 
-                        
-            self.loss = tf.losses.mean_squared_error(self.gold_output_frames, self.predictions)
-            #self.loss = tf.losses.absolute_difference(self.gold_output_frames, self.predictions)
+            reshaped_output = tf.reshape(output_layer, [-1, 2])
+            print("\treshaped_output: " + str(reshaped_output.get_shape()))
 
+            reshaped_gold_output_frames = tf.reshape(self.gold_output_frames, [-1])
+            print("\treshaped_gold_output_frames: " + str(reshaped_gold_output_frames.get_shape()))
+
+            self.loss = tf.losses.sparse_softmax_cross_entropy(reshaped_gold_output_frames, reshaped_output)
+
+            softmax = tf.nn.softmax(output_layer) # (?, 20, 20, 2)
+            self.predictions = softmax
+            
+            ##############################################
+                     
             self.global_step = tf.Variable(0, dtype=tf.int64, trainable=False)
             self.train_step = tf.train.AdamOptimizer().minimize(self.loss, global_step=self.global_step)
-       
-            #self.accuracy = tf.metrics.accuracy(self.gold_output_frames, self.predictions)            
 
             # Summaries
             self.summaries = {"training": tf.summary.merge([tf.summary.scalar("train/loss", self.loss)])}

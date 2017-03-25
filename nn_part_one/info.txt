@@ -17,3 +17,5 @@
     - Training: 60%
     - Validation: 20%
     - Testing: 20%
+
+    Ulozene framy zde - https://drive.google.com/drive/folders/0B8w6CH5QhLsTajJBZ2R2ZWhYT1U?usp=sharing
