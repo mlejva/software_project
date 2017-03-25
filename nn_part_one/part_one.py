@@ -40,7 +40,7 @@ if __name__ == "__main__":
             # Train network here            
             #print("\tNetwork training step: %d" % (network.training_step + 1))
             loss, _ = network.train(input_frames, gold_output_frames, True, network.training_step == 0)
-            #print("\tLoss: %f" % loss)
+            print("\tLoss: %f" % loss)
             ####################
             j += 1
 

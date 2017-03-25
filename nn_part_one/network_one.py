@@ -21,17 +21,13 @@ class Network:
         
             # crossentropy_loss model #
             conv_layer1 = tf.layers.conv2d(self.input_frames, 24, [5, 5], 1, padding="SAME")
-            print("\tconv_layer1: " + str(conv_layer1.get_shape()))                                                                                           
+            self.__print_tensor_shape(conv_layer1, "\tconv_layer1")                                                                                                       
 
             output_layer = tf.layers.conv2d(conv_layer1, 2, [1, 1], 1, padding="SAME")
-            print("\toutput_layer: " + str(output_layer.get_shape()))            
+            self.__print_tensor_shape(output_layer, "\toutput_layer")
 
             reshaped_output = tf.reshape(output_layer, [-1, 2])
-            print("\treshaped_output: " + str(reshaped_output.get_shape()))
-
             reshaped_gold_output_frames = tf.reshape(self.gold_output_frames, [-1])
-            print("\treshaped_gold_output_frames: " + str(reshaped_gold_output_frames.get_shape()))
-
             self.loss = tf.losses.sparse_softmax_cross_entropy(reshaped_gold_output_frames, reshaped_output)
 
             softmax_layer = tf.nn.softmax(output_layer) # (?, 20, 20, 2)
@@ -60,11 +56,14 @@ class Network:
 
             self.session.graph.finalize()           
             self.train_writer.add_graph(self.session.graph)
-            print("================")
+            print("================")    
 
     @property
     def training_step(self):
         return self.session.run(self.global_step)
+
+    def __print_tensor_shape(self, tensor, tensor_name):
+        print("%s: %s" % (tensor_name, str(tensor.get_shape())))
 
     def train(self, input_frames, output_frames, run_summaries=False, run_metadata=False):
         targets = [self.train_step, self.loss, self.predictions]
