@@ -19,7 +19,7 @@ class Network:
             self.gold_output_frames = tf.placeholder(tf.int32, [None, self.frame_height, self.frame_width, 1])
             print("\tself.output_frames: " + str(self.gold_output_frames.get_shape()))   
         
-            # crossentropy-loss model #
+            # crossentropy_loss model #
             conv_layer1 = tf.layers.conv2d(self.input_frames, 24, [5, 5], 1, padding="SAME")
             print("\tconv_layer1: " + str(conv_layer1.get_shape()))                                                                                           
 

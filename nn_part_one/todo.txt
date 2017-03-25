@@ -25,7 +25,3 @@ Major:
     - ✅ TF Summary nebere zvlast "test" set    
     - ✅ VP samostatne
     
-
-TODO:
-    - Vyzkouset pricteni meanu jako artifworkaround
-    - Pustit base-model na 300 epoch bez artif workaround
