@@ -34,19 +34,25 @@ class Network:
 
             self.loss = tf.losses.sparse_softmax_cross_entropy(reshaped_gold_output_frames, reshaped_output)
 
-            softmax = tf.nn.softmax(output_layer) # (?, 20, 20, 2)
-            self.predictions = softmax
+            softmax_layer = tf.nn.softmax(output_layer) # (?, 20, 20, 2)
+            target_pixel_predictions = tf.argmax(softmax_layer, -1) # (?, 20, 20)
+            self.predictions = target_pixel_predictions
+            
+            target_pixel_predictions = tf.reshape(target_pixel_predictions, [-1])
+            self.accuracy = tf.metrics.accuracy(reshaped_gold_output_frames, target_pixel_predictions)
             
             ##############################################
                      
             self.global_step = tf.Variable(0, dtype=tf.int64, trainable=False)
             self.train_step = tf.train.AdamOptimizer().minimize(self.loss, global_step=self.global_step)
 
-            # Summaries
-            self.summaries = {"training": tf.summary.merge([tf.summary.scalar("train/loss", self.loss)])}
+            # Summaries            
+            self.summaries = {"training": tf.summary.merge([tf.summary.scalar("train/loss", self.loss),
+                                                            tf.summary.scalar("train/accuracy", self.accuracy[1])])}
             
             for dataset in ["validation", "test"]:
-                self.summaries[dataset] = tf.summary.scalar(dataset+"/loss", self.loss)
+                self.summaries[dataset] = tf.summary.merge([tf.summary.scalar(dataset+"/loss", self.loss),
+                                                            tf.summary.scalar(dataset+"/accuracy", self.accuracy[1])])
 
             #init = tf.global_variables_initializer()
             init = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
@@ -84,7 +90,7 @@ class Network:
 
     def evaluate(self, dataset, input_frames, output_frames, run_summaries=False):
          args = {"feed_dict": {self.input_frames: input_frames, self.gold_output_frames: output_frames}}
-         targets = [self.predictions, self.loss]
+         targets = [self.predictions, self.loss, self.accuracy]
 
          if run_summaries:
             targets.append(self.summaries[dataset])
@@ -97,4 +103,5 @@ class Network:
          
          predictions = results[0]
          loss = results[1]
-         return loss, predictions
+         accuracy = results[2]
+         return loss, predictions, accuracy

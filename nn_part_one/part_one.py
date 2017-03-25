@@ -30,33 +30,34 @@ if __name__ == "__main__":
 
         vp.shuffle_training_data()
         j = 0
+        print("Training network (epoch: %d)..." % (i+1))
         while i == vp.epochs_completed:            
             input_frames, gold_output_frames = vp.next_batch(grayscale=True)            
             gold_output_frames = video_prep.convert_gold_output_to_onehot(gold_output_frames)
                                     
             input_frames, _ = video_prep.normalize_mean(input_frames)            
 
-            # Train network here
-            print("Training network...")
-            print("\tNetwork training step: %d" % (network.training_step + 1))
+            # Train network here            
+            #print("\tNetwork training step: %d" % (network.training_step + 1))
             loss, _ = network.train(input_frames, gold_output_frames, True, network.training_step == 0)
-            print("\tLoss: %f" % loss)
+            #print("\tLoss: %f" % loss)
             ####################
             j += 1
 
         # Eval network on validation set here
-        print("\nRunning validation...")
+        print("Running validation (epoch: %d)..." % (i+1))
         input_frames_val, gold_output_frames_val = vp.validation_dataset(grayscale=True)        
         gold_output_frames_val = video_prep.convert_gold_output_to_onehot(gold_output_frames_val)
         
         input_frames_val, _ = video_prep.normalize_mean(input_frames_val)
 
-        loss, _ = network.evaluate("validation", input_frames_val, gold_output_frames_val, True)
-        print("\n\tLoss on validation: ", loss)
+        loss, _, accuracy = network.evaluate("validation", input_frames_val, gold_output_frames_val, True)
+        print("\tLoss on validation: %f" % loss)
+        print("\tAccuracy on validation: %f" % (accuracy[1]*100.0))
         ####################
 
         # Eval network on test set here
-        print("Running testing...")
+        print("Running testing (epoch: %d)..." % (i+1))
         test_prediction_name_path = epoch_dir_name + "/test-prediction-frames-%d" % i
         input_name_path = epoch_dir_name + "/test-input-frames-%d" % i            
         gold_output_name_path = epoch_dir_name + "/test-gold-output-frames-%d" % i
@@ -67,9 +68,10 @@ if __name__ == "__main__":
         
         input_frames_test, _ = video_prep.normalize_mean(input_frames_test)
 
-        loss, test_predictions = network.evaluate("test", input_frames_test, gold_output_frames_test, True)
-        print("\n\tLoss on testing: ", loss)        
-        
+        loss, test_predictions, accuracy = network.evaluate("test", input_frames_test, gold_output_frames_test, True)
+        print("\tLoss on testing: %f" % loss)        
+        print("\tAccuracy on testing: %f" % (accuracy[1]*100.0))        
         video_prep.save_prediction_frames(test_prediction_name_path, test_predictions)
+        print("================")
         ####################
         

@@ -74,12 +74,12 @@ def save_prediction_frames(path, prediction_frames):
         frame = np.zeros([frame_height, frame_width, 1])
         for i in range(frame_height):
             for j in range(frame_width):
-                is_not_target, is_target = prediction_frames[frame_index, i, j, :]
-                if is_target >= is_not_target:
+                target_pixel = prediction_frames[frame_index, i, j]
+
+                if target_pixel == 1:
                     frame[i, j] = 0
                 else:
                     frame[i, j] = 255
-
         cv2.imwrite(path+"/prediction-%d.png" % frame_index, frame)
 
 def convert_gold_output_to_onehot(gold_outputs):    
@@ -155,7 +155,8 @@ class VideoPreprocessor:
         if not self.__prepared:
             raise ValueError("Method 'prepare_datasets()' must be called before.")
 
-        print("Epoch: %d Batch: %d (out of %d)" % (self.epochs_completed+1, self.__current_batch_index+1, self.__batch_count))
+        #print("\tEpoch: %d Batch: %d (out of %d)" % (self.epochs_completed+1, self.__current_batch_index+1, self.__batch_count))
+        print("\tBatch: %d (out of %d)" % (self.__current_batch_index+1, self.__batch_count))
 
         range_start = self.__current_batch_index * self.__batch_size
         range_end = range_start + self.__batch_size
@@ -215,8 +216,8 @@ class VideoPreprocessor:
         gold_output_frames = np.empty([frames_total, height, width, 1], dtype=np.float64)
 
         for i in range(videos_length):
-            print("\tProcessing video: %d (out of %d)..." % (i+1, videos_length))
-            video = videos[i]
+            #print("\tProcessing video: %d (out of %d)..." % (i+1, videos_length))
+            video = videos[i]            
             tmp_frames = self.__get_frames_from_video(video, frames_in_single_video, frame_shape, grayscale=True)
 
             # Insert frames to proper arrays
@@ -226,10 +227,10 @@ class VideoPreprocessor:
                     input_frames[i * (frames_in_single_video - 2) + frame_index, :, :, 1] = tmp_frames[frame_index + 1]
                     
                     gold_output_frames[i * (frames_in_single_video - 2) + frame_index, :, :, 0] = tmp_frames[frame_index + 2]
-        
+
         return input_frames, gold_output_frames
 
-    def __get_frames_from_video(self, path_to_video, frames_in_video, frame_shape, grayscale=False):
+    def __get_frames_from_video(self, path_to_video, frames_in_video, frame_shape, grayscale=False):        
         cap = cv2.VideoCapture(path_to_video)            
         
         (height, width) = frame_shape
