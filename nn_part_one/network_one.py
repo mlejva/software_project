@@ -21,7 +21,7 @@ class Network:
         
             # crossentropy_loss model #
             conv_layer1 = tf.layers.conv2d(self.input_frames, 24, [5, 5], 1, padding="SAME")
-            self.__print_tensor_shape(conv_layer1, "\tconv_layer1")                                                                                                       
+            self.__print_tensor_shape(conv_layer1, "\tconv_layer1")             
 
             output_layer = tf.layers.conv2d(conv_layer1, 2, [1, 1], 1, padding="SAME")
             self.__print_tensor_shape(output_layer, "\toutput_layer")
@@ -30,9 +30,13 @@ class Network:
             reshaped_gold_output_frames = tf.reshape(self.gold_output_frames, [-1])
             self.loss = tf.losses.sparse_softmax_cross_entropy(reshaped_gold_output_frames, reshaped_output)
 
-            softmax_layer = tf.nn.softmax(output_layer) # (?, 20, 20, 2)
-            target_pixel_predictions = tf.argmax(softmax_layer, -1) # (?, 20, 20)
-            self.predictions = target_pixel_predictions
+            # Convert to probability distribution
+            target_pixel_softmax_layer = tf.nn.softmax(output_layer) # (?, 20, 20, 2)
+            # Insert 1 where prob. of being a target pixel is greater than prob. of not being a target pixel
+            target_pixel_predictions = tf.argmax(target_pixel_softmax_layer, -1) # (?, 20, 20)
+            
+            #self.predictions = target_pixel_predictions
+            self.predictions = target_pixel_softmax_layer
             
             target_pixel_predictions = tf.reshape(target_pixel_predictions, [-1])
             self.accuracy = tf.metrics.accuracy(reshaped_gold_output_frames, target_pixel_predictions)

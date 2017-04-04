@@ -76,10 +76,15 @@ def save_prediction_frames(path, prediction_frames):
             for j in range(frame_width):
                 target_pixel = prediction_frames[frame_index, i, j]
 
-                if target_pixel == 1:
+                if target_pixel[0] > target_pixel[1]:
+                    frame[i, j] = 255 * target_pixel[0]
+                else:
+                    frame[i, j] = 0
+
+                '''if target_pixel == 1:
                     frame[i, j] = 0
                 else:
-                    frame[i, j] = 255
+                    frame[i, j] = 255'''
         cv2.imwrite(path+"/prediction-%d.png" % frame_index, frame)
 
 def convert_gold_output_to_onehot(gold_outputs):    

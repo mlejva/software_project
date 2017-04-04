@@ -24,4 +24,6 @@ Major:
     - ❌ Denormalizace vystupnich dat     
     - ✅ TF Summary nebere zvlast "test" set    
     - ✅ VP samostatne
+    - ✅ Accuracy
+    - ❌ Skalovani predictions misto prahovani
     
