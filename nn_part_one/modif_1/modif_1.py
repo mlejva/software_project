@@ -1,7 +1,7 @@
 import os
 #import sys
 #sys.path.append('path/to/your/file')
-from network_one import Network
+from network_modif_1 import Network
 
 import video_preprocessor as video_prep
 
