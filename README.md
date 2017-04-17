@@ -1,7 +1,6 @@
 # School Software Project
-## Summer Semester
 
-Neural network able to predict frames of an video.
+Neural network able to predict frames of the video.
 
 About
 ==========
