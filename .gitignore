@@ -4,10 +4,8 @@
 # VS Code Config
 .vscode/*
 
-# Videos
-nn_part_one/saved_frames/
-nn_part_one/saved_frames/*
-nn_part_one/videos/
+nn_part_one/*/saved_frames/*
+nn_part_one/*/videos/*
 nn_part_one/frames-*/*
 nn_part_one/img-*/*
 

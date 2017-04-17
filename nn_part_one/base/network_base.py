@@ -8,8 +8,8 @@ class Network:
         graph = tf.Graph()
         self.session = tf.Session(graph = graph)        
     
-        self.train_writer = tf.summary.FileWriter("./logs/network-one/train/%s" % exp_name, self.session.graph)
-        self.test_writer = tf.summary.FileWriter("./logs/network-one/test/%s" % exp_name)
+        self.train_writer = tf.summary.FileWriter("./logs/network_base/train/%s" % exp_name, self.session.graph)
+        self.test_writer = tf.summary.FileWriter("./logs/network_base/test/%s" % exp_name)
 
     def construct(self):
         print("================")

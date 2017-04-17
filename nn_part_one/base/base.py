@@ -1,13 +1,12 @@
+import sys
+sys.path.append('../') # Because video_preprocessor is in the parent folder
+import video_preprocessor as video_prep
 import os
-#import sys
-#sys.path.append('path/to/your/file')
-from network_base import Network
-
-import video_preprocessor_base as video_prep
-
 import shutil
 import cv2
 import numpy as np
+from network_base import Network
+
 
 if __name__ == "__main__":
     batch_size = 7

@@ -40,6 +40,26 @@ def generate_white_img_with_mask(img_height, img_width, mask):
 
     return img
 
+def add_salt_and_pepper_noise(img, seed, index):
+    #np.random.seed(seed)
+    my_seed = np.random.RandomState(seed)
+    noise_channel = my_seed.randint(0, 2, [img.shape[0], img.shape[1]], dtype="uint8") * 255.0
+
+    # Save the original target pixel position
+    # becuase it may get masked by the noise
+    target_pixel_pos = np.where(img == 0)    
+    
+    # Copy the noise along the third dimension
+    # because images are greyscaled we want same number
+    # in all three RGB dimensions (either 0 or 255)
+    noise = np.empty(img.shape, dtype="uint8")
+    for i in range(np.size(noise, 2)):
+        noise[:, :, i] = noise_channel
+
+    # Put the target pixel back
+    noise[target_pixel_pos] = 0
+    return noise
+
 def generate_black_dot_videos(fourcc, fps, direction, size, reverse):
     frame_height = size
     frame_width = size
@@ -65,22 +85,30 @@ def generate_black_dot_videos(fourcc, fps, direction, size, reverse):
     i = start
     while i != end:
         video_name = "./videos/%s-%d.mp4" % (type, i)
-        video_writer = cv2.VideoWriter(video_name, fourcc, fps, (frame_size, frame_size), True)        
+        #video_name_noised = "./videos/%s-%d-noised.mp4" % (type, i)
+        video_writer = cv2.VideoWriter(video_name, fourcc, fps, (frame_size, frame_size), True) 
+        #video_writer_noised = cv2.VideoWriter(video_name_noised, fourcc, fps, (frame_size, frame_size), True)
 
+        seed = i # Same seed for a single video
         j = start
         while j != end:
             if direction == Direction.UP_DOWN:
-                frame = generate_white_img_with_mask(frame_height, frame_width, [j, i, 0])
+                mask = [j, i, 0]
             elif direction == Direction.LEFT_RIGHT:
-                frame = generate_white_img_with_mask(frame_height, frame_width, [i, j, 0])    
+                mask = [i, j, 0]
+                
+            frame = generate_white_img_with_mask(frame_height, frame_width, mask)    
+            frame = add_salt_and_pepper_noise(frame, seed, (i*j + j))            
 
             video_writer.write(frame)
+            #video_writer_noised.write(frame)
             j += step
         video_writer.release()
+        #video_writer_noised.release()
         i += step
 
 if __name__ == "__main__":
-    frame_size = 20
+    frame_size = 30
     fps = 10.0
     fourcc = cv2.VideoWriter_fourcc(*"hfyu")    
 

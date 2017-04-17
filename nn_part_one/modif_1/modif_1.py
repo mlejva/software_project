@@ -1,13 +1,10 @@
-import os
-#import sys
-#sys.path.append('path/to/your/file')
-from network_modif_1 import Network
-
+import sys
+sys.path.append('../') # Because video_preprocessor is in the parent folder
 import video_preprocessor as video_prep
-
 import shutil
 import cv2
 import numpy as np
+from network_modif_1 import Network
 
 if __name__ == "__main__":
     batch_size = 7
@@ -18,6 +15,7 @@ if __name__ == "__main__":
     (height, width) = vp.get_training_frame_shape()
     
     exp_name = "crossentropy_loss-model_norm-mean_batch-%d_epochs-%d" % (batch_size, epochs)
+    exp_name = "dummy"
     network = Network(height, width, exp_name)
     network.construct()
 
@@ -39,7 +37,7 @@ if __name__ == "__main__":
 
             # Train network here            
             #print("\tNetwork training step: %d" % (network.training_step + 1))
-            loss, _ = network.train(input_frames, gold_output_frames, True, network.training_step == 0)
+            loss, predictions = network.train(input_frames, gold_output_frames, True, network.training_step == 0)            
             print("\tLoss: %f" % loss)
             ####################
             j += 1
