@@ -10,8 +10,8 @@ Whole project is divided into three parts - three main networks. Each part conta
 
 Naming convention of these parts is as follows:
 
-  *`nn_part_one`
-   *First part of the project. Contains base network in the folder `_base_` and three modifications in folders `modif_1`, `modif_2` and `modif_3` respectively.
+* Folder `nn_part_one`
+   * First part of the project. Contains base network in the folder `_base_` and three modifications in folders `modif_1`, `modif_2` and `modif_3` respectively.
 
 How to run
 ==========
