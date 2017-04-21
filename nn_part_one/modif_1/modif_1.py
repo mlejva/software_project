@@ -1,3 +1,4 @@
+import os
 import sys
 sys.path.append('../') # Because video_preprocessor is in the parent folder
 import video_preprocessor as video_prep
@@ -30,14 +31,14 @@ if __name__ == "__main__":
         j = 0
         print("Training network (epoch: %d)..." % (i+1))
         while i == vp.epochs_completed:            
-            input_frames, gold_output_frames = vp.next_batch(grayscale=True)            
-            gold_output_frames = video_prep.convert_gold_output_to_onehot(gold_output_frames)
-                                    
+            input_frames, gold_output_frames = vp.next_batch(grayscale=True)
+            gold_output_frames = video_prep.convert_gold_output_to_onehot(gold_output_frames)            
+
             input_frames, _ = video_prep.normalize_mean(input_frames)            
 
             # Train network here            
             #print("\tNetwork training step: %d" % (network.training_step + 1))
-            loss, predictions = network.train(input_frames, gold_output_frames, True, network.training_step == 0)            
+            loss, predictions = network.train(input_frames, gold_output_frames, True, network.training_step == 0)                        
             print("\tLoss: %f" % loss)
             ####################
             j += 1
@@ -45,7 +46,7 @@ if __name__ == "__main__":
         # Eval network on validation set here
         print("Running validation (epoch: %d)..." % (i+1))
         input_frames_val, gold_output_frames_val = vp.validation_dataset(grayscale=True)        
-        gold_output_frames_val = video_prep.convert_gold_output_to_onehot(gold_output_frames_val)
+        gold_output_frames_val = video_prep.convert_gold_output_to_onehot(gold_output_frames_val)        
         
         input_frames_val, _ = video_prep.normalize_mean(input_frames_val)
 
@@ -66,10 +67,11 @@ if __name__ == "__main__":
         
         input_frames_test, _ = video_prep.normalize_mean(input_frames_test)
 
-        loss, test_predictions, accuracy = network.evaluate("test", input_frames_test, gold_output_frames_test, True)
+        loss, test_predictions, accuracy = network.evaluate("test", input_frames_test, gold_output_frames_test, True)        
+        print(test_predictions[0, 0, 0, :])
         print("\tLoss on testing: %f" % loss)        
         print("\tAccuracy on testing: %f" % (accuracy[1]*100.0))        
-        video_prep.save_prediction_frames(test_prediction_name_path, test_predictions)
+        video_prep.save_prediction_frames(test_prediction_name_path, test_predictions, discrete_conversion=False)
         print("================")
         ####################
         

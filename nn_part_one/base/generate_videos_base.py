@@ -80,7 +80,7 @@ def generate_black_dot_videos(fourcc, fps, direction, size, reverse):
         i += step
 
 if __name__ == "__main__":
-    frame_size = 20
+    frame_size = 30
     fps = 10.0
     fourcc = cv2.VideoWriter_fourcc(*"hfyu")    
 

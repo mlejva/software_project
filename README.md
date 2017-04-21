@@ -7,7 +7,7 @@ About
 Whole project is divided into three parts - three main networks. Each part contains several modifications of the base network for the given part. The whole project is detailed described in `docs/rp_specifikace.pdf_` (in Czech language).
 
 
-Naming convention of these parts is as follows:
+Naming convention of these parts is following:
 
 * Folder `nn_part_one`
    * First part of the project. Contains base network in the folder `_base_` and three modifications in folders `modif_1`, `modif_2` and `modif_3` respectively.

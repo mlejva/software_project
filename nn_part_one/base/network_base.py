@@ -39,8 +39,7 @@ class Network:
             self.predictions = target_pixel_softmax_layer
             
             target_pixel_predictions = tf.reshape(target_pixel_predictions, [-1])
-            self.accuracy = tf.metrics.accuracy(reshaped_gold_output_frames, target_pixel_predictions)
-            
+            self.accuracy = tf.metrics.accuracy(reshaped_gold_output_frames, target_pixel_predictions)            
             ##############################################
                      
             self.global_step = tf.Variable(0, dtype=tf.int64, trainable=False)

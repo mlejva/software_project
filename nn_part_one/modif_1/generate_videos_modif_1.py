@@ -40,10 +40,9 @@ def generate_white_img_with_mask(img_height, img_width, mask):
 
     return img
 
-def add_salt_and_pepper_noise(img, seed, index):
-    #np.random.seed(seed)
+def add_noise(img, seed, lower_bound=0.5):
     my_seed = np.random.RandomState(seed)
-    noise_channel = my_seed.randint(0, 2, [img.shape[0], img.shape[1]], dtype="uint8") * 255.0
+    noise_channel = my_seed.uniform(lower_bound, 1.0, [img.shape[0], img.shape[1]]) * 255.0
 
     # Save the original target pixel position
     # becuase it may get masked by the noise
@@ -51,7 +50,7 @@ def add_salt_and_pepper_noise(img, seed, index):
     
     # Copy the noise along the third dimension
     # because images are greyscaled we want same number
-    # in all three RGB dimensions (either 0 or 255)
+    # in all three RGB dimensions
     noise = np.empty(img.shape, dtype="uint8")
     for i in range(np.size(noise, 2)):
         noise[:, :, i] = noise_channel
@@ -98,7 +97,7 @@ def generate_black_dot_videos(fourcc, fps, direction, size, reverse):
                 mask = [i, j, 0]
                 
             frame = generate_white_img_with_mask(frame_height, frame_width, mask)    
-            frame = add_salt_and_pepper_noise(frame, seed, (i*j + j))            
+            frame = add_noise(frame, seed, 0.5)            
 
             video_writer.write(frame)
             #video_writer_noised.write(frame)

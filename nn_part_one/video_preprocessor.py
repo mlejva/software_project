@@ -61,32 +61,38 @@ def save_gold_output_frames(path, gold_output_frames):
         gold_output = gold_output_frames[i]
         cv2.imwrite(path+"/gold-%d.png" % i, gold_output)
 
-def convert_network_predictions_to_frames(prediction_frames):
+def convert_network_predictions_to_frames(prediction_frames, discrete_conversion=False):
     batch_size = np.size(prediction_frames, 0)
     frame_height = np.size(prediction_frames, 1)
     frame_width = np.size(prediction_frames, 2)
 
     converted = np.zeros([batch_size, frame_height, frame_width, 1])
-   
+       
     for frame_index in range(batch_size):
         frame = np.zeros([frame_height, frame_width, 1])
         for i in range(frame_height):
             for j in range(frame_width):
                 target_pixel = prediction_frames[frame_index, i, j]
 
-                if target_pixel[0] > target_pixel[1]:
-                    frame[i, j] = 255 * target_pixel[0]
+                if discrete_conversion:
+                    if target_pixel[0] > target_pixel[1]:
+                        frame[i, j] = 255
+                    else:
+                        frame[i, j] = 0
                 else:
-                    frame[i, j] = 0
+                    if target_pixel[0] > target_pixel[1]:
+                        frame[i, j] = 255 * target_pixel[0]
+                    else:
+                        frame[i, j] = 255 * target_pixel[0]
                 converted[frame_index] = frame
     return converted
 
-def save_prediction_frames(path, predictions):
+def save_prediction_frames(path, predictions, discrete_conversion=False):
     if os.path.exists(path):
         shutil.rmtree(path)
     os.mkdir(path)
 
-    predicted_frames = convert_network_predictions_to_frames(predictions)
+    predicted_frames = convert_network_predictions_to_frames(predictions, discrete_conversion)
     batch_size = np.size(predicted_frames, 0)
 
     for frame_index in range(batch_size):
@@ -102,10 +108,15 @@ def convert_gold_output_to_onehot(gold_outputs):
         for i in range(frame_height):
             for j in range(frame_width):
                 pixel_val = gold_outputs[batch, i, j, :]
-                if pixel_val >= 200: # White
+                '''if pixel_val >= 200: # White
                     gold_outputs[batch, i, j, :] = 0
                 else: # Black
+                    gold_outputs[batch, i, j, :] = 1'''
+                if pixel_val <= 50:
                     gold_outputs[batch, i, j, :] = 1
+                else:
+                    gold_outputs[batch, i, j, :] = 0
+
     return gold_outputs
 
 class VideoPreprocessor:
