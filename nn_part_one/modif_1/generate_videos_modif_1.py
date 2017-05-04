@@ -42,7 +42,10 @@ def generate_white_img_with_mask(img_height, img_width, mask):
 
 def add_noise(img, seed, lower_bound=0.5):
     my_seed = np.random.RandomState(seed)
-    noise_channel = my_seed.uniform(lower_bound, 1.0, [img.shape[0], img.shape[1]]) * 255.0
+    noise_channel = my_seed.uniform(lower_bound, 1.0, [img.shape[0], img.shape[1]])
+    #noise_channel = my_seed.randint(lower_bound, 1.0, size=[img.shape[0], img.shape[1]])
+    noise_channel *= 255
+    #noise_channel = my_seed.uniform(lower_bound, 1.0, [img.shape[0], img.shape[1]]) * 255.0
 
     # Save the original target pixel position
     # becuase it may get masked by the noise
@@ -97,7 +100,7 @@ def generate_black_dot_videos(fourcc, fps, direction, size, reverse):
                 mask = [i, j, 0]
                 
             frame = generate_white_img_with_mask(frame_height, frame_width, mask)    
-            frame = add_noise(frame, seed, 0.5)            
+            frame = add_noise(frame, seed, 0.8)              
 
             video_writer.write(frame)
             #video_writer_noised.write(frame)
